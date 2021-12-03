@@ -22,7 +22,7 @@ function mapMessage(m) {
         author: m.author,
         body: m.body,
         index: m.index,
-        timestamp: (m.dateCreated?.toISOString || m.date_created),
+        timestamp: (m.dateCreated?.toISOString() || m.date_created),
         id: m.sid,
         media: m.media,
         processor: 'twillio',
@@ -182,7 +182,7 @@ const sendTextMsg = async (toNum, data) => {
         `Body=${data}&From=%2B${credentials.twilio.twilioPhone}&To=%2B1${toNum}`, sidAuth);
 }
 
-//return getAllMessages(credentials.twilio.serviceSidDontUse, msgs => console.log(msgs));
+return getAllMessages(credentials.twilio.serviceSidDontUse, msgs => console.log(msgs));
 
 module.exports = {
     deleteAll,
