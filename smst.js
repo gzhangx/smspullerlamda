@@ -108,7 +108,6 @@ async function checkSms(serviceSid, phone, onMsg, existingToken) {
         conv = await client.getConversationByUniqueName(tkIdentity);
         alreadyExists = true;
     } catch {
-        console.log('TODO: DEBUGREMOVE create conv')
         conv = await client.createConversation({
             friendlyName: 'ggfreiendlyname',
             uniqueName: tkIdentity,
@@ -124,7 +123,7 @@ async function checkSms(serviceSid, phone, onMsg, existingToken) {
         conv.on('messageAdded', msg => {
             //console.log(msg); //conversation,  state
             console.log(`TODO: DEBUGREMOVE !!!!!!!!!!!!!!!!!!!!!!!!${msg.state.author}: ${msg.state.timestamp} ${msg.state.subject || ''} ${msg.state.body}`)
-            onMsg(msg);
+            onMsg(mapMessage(msg));
         });
     }
     //const allParts = await conv.getParticipants();
