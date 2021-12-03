@@ -1,6 +1,5 @@
-const db = require('./db');
+
 const smst = require('./smst');
-const dbOps = require('./dbops');
 const dbOps = require('./dbops');
 
 async function doProcess(body) {
