@@ -30,6 +30,14 @@ async function doProcess(body) {
                 return msgs;
             })
             return data;
+        case 'sendMessage': {
+            if (!body.number || !body.number.match(/[0-9]{10,11}/g)) {
+                return {
+                    error: `Bad number ${body.number}`,
+                }
+            }
+            return await smst.sendTextMsg(body.number, body.data);
+        }
     }
     return {
         ...user

@@ -178,7 +178,7 @@ const doTwilioPost = (url, data, Auth = auth) => request.post(getTwilioUrl(url))
 
 const sendTextMsg = async (toNum, data) => {
     return await doTwilioPost(`https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`,
-        `Body=${data}&From=%2B${credentials.twilioPhone}&To=%2B1${toNum}`, sidAuth);
+        `Body=${data}&From=%2B${credentials.twilio.twilioPhone}&To=%2B1${toNum}`, sidAuth);
 }
 
 //return getAllMessages(credentials.twilio.serviceSidDontUse, msgs => console.log(msgs));
