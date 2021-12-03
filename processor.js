@@ -47,6 +47,7 @@ async function doProcess(body, sendWs) {
                     error: `Bad number ${body.number}`,
                 }
             }
+            const phone = body.number;
             const lk = getListenerKey(twilioSid, phone);
             let onMsg = null;
             if (!allListeners[lk]) {
@@ -55,7 +56,7 @@ async function doProcess(body, sendWs) {
                     sendWs(JSON.stringify(msg));
                 }
             }
-            const conv = await smst.checkSms(twilioSid, phone);
+            const conv = await smst.checkSms(twilioSid, phone, onMsg);
             allListeners[lk] = conv;
         }
     }

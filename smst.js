@@ -124,7 +124,7 @@ async function checkSms(serviceSid, phone, onMsg) {
         conv.on('messageAdded', msg => {
             console.log(`message added ${phone}`);
             //console.log(msg); //conversation,  state
-            console.log(`${msg.state.author}: ${msg.state.timestamp} ${msg.state.subject || ''} ${msg.state.body}`)
+            console.log(`!!!!!!!!!!!!!!!!!!!!!!!!${msg.state.author}: ${msg.state.timestamp} ${msg.state.subject || ''} ${msg.state.body}`)
             onMsg(msg);
         });
     }
