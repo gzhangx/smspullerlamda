@@ -1,0 +1,26 @@
+{
+  "name": "smspullerlambda",
+  "version": "1.0.0",
+  "description": "shout out to https://github.com/ryanmurakami/websockets-on-aws/blob/main/src/public/lambda.js",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gzhangx/smspullerlamda.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gzhangx/smspullerlamda/issues"
+  },
+  "homepage": "https://github.com/gzhangx/smspullerlamda#readme",
+  "dependencies": {
+    "@twilio/conversations": "^2.0.0",
+    "aws-sdk": "^2.1041.0",
+    "bluebird": "^3.7.2",
+    "superagent": "^6.1.0",
+    "twilio": "^3.71.2"
+  }
+}
