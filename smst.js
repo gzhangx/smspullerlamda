@@ -22,13 +22,13 @@ function mapMessage(m) {
         author: m.author,
         body: m.body,
         index: m.index,
-        timestamp: m.date_created,
+        timestamp: m.dateCreated || m.date_created,
         id: m.sid,
         media: m.media,
         processor: 'twillio',
         source: 'sms',
-        participant_sid: m.participant_sid,
-        conversation_sid: m.conversation_sid,
+        participantSid: m.participantSid || m.participant_sid,
+        conversationSid: m.conversationSid || m.conversation_sid,
     }
 }
 async function getAllMessages(serviceId, onMsgs) {
@@ -41,6 +41,7 @@ async function getAllMessages(serviceId, onMsgs) {
             //onMsgs(msgs.messages.map(mapMessage));            
             const msgs = await twilioClient.conversations.conversations(conv.sid).messages.page({ order: 'desc', limit: 50, pageNumber: 0 })
             //nextPageUrl, previousPageUrl,instances[]
+            console.log(msgs.instances[0])
             return await onMsgs(msgs.instances.map(mapMessage));
         });
         res = res.concat(cur);
@@ -181,7 +182,7 @@ const sendTextMsg = async (toNum, data) => {
         `Body=${data}&From=%2B${credentials.twilioPhone}&To=%2B1${toNum}`, sidAuth);
 }
 
-//return getAllMessages(credentials.twilio.serviceSidDontUse, msgs=>console.log(msgs));
+//return getAllMessages(credentials.twilio.serviceSidDontUse, msgs => console.log(msgs));
 
 module.exports = {
     sendTextMsg,
