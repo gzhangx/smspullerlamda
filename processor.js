@@ -1,5 +1,5 @@
 const db = require('./db');
-async function process(body) {
+async function doProcess(body) {
     if (!body.username) {
         return {
             error:'No username',
@@ -19,5 +19,5 @@ async function process(body) {
 }
 
 module.exports = {
-    process,
+    doProcess,
 }
