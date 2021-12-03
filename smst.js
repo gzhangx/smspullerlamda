@@ -9,6 +9,8 @@ const accountSid = credentials.twilio.sid;
 const authToken = credentials.twilio.token;
 const twilioClient = require('twilio')(accountSid, authToken);
 
+const store = require('./store');
+
 async function deleteAll() {
     const r = await doTwilioGet('Conversations');
     await Promise.map(r.conversations, async conv => {
@@ -53,7 +55,21 @@ async function getAllMessages(serviceId, onMsgs) {
     return res;
 }
 
-async function generateToken(identity, serviceSid) {
+async function generateToken(identity, serviceSid, existingToken) {
+
+    let existing = store.store.tokensBySid[serviceSid];
+    if (!existing) {
+        existing = { token: existingToken, time: existingToken?now:0 };
+        store.store.tokensBySid[serviceSid] = existing;
+    }
+    const now = new Date().getTime();
+    if (now - existing.time < 3600 * 1000 && existing.token) {
+        console.log(`TODO: DEBUGREMOVE use existing token ${existing.token}`);
+        return existing.token;
+    } else {
+        console.log(`TODO: DEBUGREMOVE generating new token`);
+    }
+    existing.time = now;
     const twilioAccountSid = accountSid; //'ACxxxxxxxxxx';
     const twilioApiKey = credentials.twilio.aid; //'SKxxxxxxxxxx';
     const twilioApiSecret = credentials.twilio.pwd;
@@ -75,7 +91,9 @@ async function generateToken(identity, serviceSid) {
     );
 
     token.addGrant(chatGrant);
-    return token.toJwt();
+
+    existing.token = token.toJwt();
+    return existing.token;
 }
 
 function fixPhone(phone) {
@@ -85,11 +103,11 @@ function fixPhone(phone) {
 }
 
 
-async function checkSms(serviceSid, phone, onMsg) {
+async function checkSms(serviceSid, phone, onMsg, existingToken) {
     //await deleteAll();
+    phone = fixPhone(phone);
     const tkIdentity = `GGID${phone}`;
-    const token = await generateToken(tkIdentity, serviceSid);
-    console.log(token)
+    const token = existingToken || await generateToken(tkIdentity, serviceSid);
     const client = new twilioConversionsImp.Client(token);
     await new Promise(resolve => {
         client.on('stateChanged', state => {
@@ -99,16 +117,15 @@ async function checkSms(serviceSid, phone, onMsg) {
             }
         });
     });
+    console.log('initialized');
 
     let conv = null;
     let alreadyExists = false;
     try {
-        console.log('gt conv')
         conv = await client.getConversationByUniqueName(tkIdentity);
         alreadyExists = true;
-        console.log('already exists')
     } catch {
-        console.log('create conv')
+        console.log('TODO: DEBUGREMOVE create conv')
         conv = await client.createConversation({
             friendlyName: 'ggfreiendlyname',
             uniqueName: tkIdentity,
@@ -122,9 +139,8 @@ async function checkSms(serviceSid, phone, onMsg) {
 
     if (onMsg) {
         conv.on('messageAdded', msg => {
-            console.log(`message added ${phone}`);
             //console.log(msg); //conversation,  state
-            console.log(`!!!!!!!!!!!!!!!!!!!!!!!!${msg.state.author}: ${msg.state.timestamp} ${msg.state.subject || ''} ${msg.state.body}`)
+            console.log(`TODO: DEBUGREMOVE !!!!!!!!!!!!!!!!!!!!!!!!${msg.state.author}: ${msg.state.timestamp} ${msg.state.subject || ''} ${msg.state.body}`)
             onMsg(msg);
         });
     }
@@ -186,6 +202,7 @@ const sendTextMsg = async (toNum, data) => {
 module.exports = {
     sendTextMsg,
     getAllMessages,
+    generateToken,
     checkSms,
     fixPhone,
 }
