@@ -187,4 +187,5 @@ module.exports = {
     sendTextMsg,
     getAllMessages,
     checkSms,
+    fixPhone,
 }

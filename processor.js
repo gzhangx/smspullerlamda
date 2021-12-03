@@ -2,7 +2,11 @@
 const smst = require('./smst');
 const dbOps = require('./dbops');
 
-async function doProcess(body) {
+const getListenerKey = (sid, phone) => `${sid}-${smst.fixPhone(phone)}`;
+const allListeners = {
+
+};
+async function doProcess(body, sendWs) {
     if (!body.username) {
         return {
             error:'No username',
@@ -30,13 +34,29 @@ async function doProcess(body) {
                 return msgs;
             })
             return data;
-        case 'sendMessage': {
+        case 'sendMessage': 
             if (!body.number || !body.number.match(/[0-9]{10,11}/g)) {
                 return {
                     error: `Bad number ${body.number}`,
                 }
             }
             return await smst.sendTextMsg(body.number, body.data);
+        case 'listen': {
+            if (!body.number || !body.number.match(/[0-9]{10,11}/g)) {
+                return {
+                    error: `Bad number ${body.number}`,
+                }
+            }
+            const lk = getListenerKey(twilioSid, phone);
+            let onMsg = null;
+            if (!allListeners[lk]) {
+                console.log(`adding listener for ${lk}`);
+                onMsg = msg => {
+                    sendWs(JSON.stringify(msg));
+                }
+            }
+            const conv = await smst.checkSms(twilioSid, phone);
+            allListeners[lk] = conv;
         }
     }
     return {
