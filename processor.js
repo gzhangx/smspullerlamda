@@ -2,9 +2,7 @@
 const smst = require('./smst');
 const dbOps = require('./dbops');
 
-const store = require('./store');
 const getListenerKey = (sid, phone) => `${sid}-${smst.fixPhone(phone)}`;
-const allListeners = store.store.allListeners;
 
 async function doProcess(body, sendWs) {
     if (!body.username) {
@@ -55,23 +53,18 @@ async function doProcess(body, sendWs) {
             const phone = body.number;
             const lk = getListenerKey(twilioSid, phone);
             let onMsg = null;
-            if (!allListeners[lk]) {
-                console.log(`adding listener for ${lk}`);
-                onMsg = msg => {
-                    sendWs(JSON.stringify(msg));
-                }
-                try {
-                    console.log('checking sms')
-                    const conv = await smst.checkSms(twilioSid, phone, onMsg, body.token);
-                    allListeners[lk] = conv;
-                } catch (exc) {
-                    console.log('??????????????????? checksms error');
-                    console.log(exc);
-                }
-            } else {
-                console.log(`TODO: nooooooooooooooooo, adding listener for ${lk}`);
+            console.log(`adding listener for ${lk}`);
+            onMsg = msg => {
+                sendWs(JSON.stringify(msg));
             }
-            
+            try {
+                console.log('checking sms')
+                const conv = await smst.checkSms(twilioSid, phone, onMsg, body.token);
+                allListeners[lk] = conv;
+            } catch (exc) {
+                console.log('??????????????????? checksms error');
+                console.log(exc);
+            }                    
         }
     }
     return {

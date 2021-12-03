@@ -9,8 +9,6 @@ const accountSid = credentials.twilio.sid;
 const authToken = credentials.twilio.token;
 const twilioClient = require('twilio')(accountSid, authToken);
 
-const store = require('./store');
-
 async function deleteAll() {
     const r = await doTwilioGet('Conversations');
     await Promise.map(r.conversations, async conv => {
@@ -55,21 +53,7 @@ async function getAllMessages(serviceId, onMsgs) {
     return res;
 }
 
-async function generateToken(identity, serviceSid, existingToken) {
-
-    let existing = store.store.tokensBySid[serviceSid];
-    if (!existing) {
-        existing = { token: existingToken, time: existingToken?now:0 };
-        store.store.tokensBySid[serviceSid] = existing;
-    }
-    const now = new Date().getTime();
-    if (now - existing.time < 3600 * 1000 && existing.token) {
-        console.log(`TODO: DEBUGREMOVE use existing token ${existing.token}`);
-        return existing.token;
-    } else {
-        console.log(`TODO: DEBUGREMOVE generating new token`);
-    }
-    existing.time = now;
+async function generateToken(identity, serviceSid) {
     const twilioAccountSid = accountSid; //'ACxxxxxxxxxx';
     const twilioApiKey = credentials.twilio.aid; //'SKxxxxxxxxxx';
     const twilioApiSecret = credentials.twilio.pwd;
@@ -92,8 +76,7 @@ async function generateToken(identity, serviceSid, existingToken) {
 
     token.addGrant(chatGrant);
 
-    existing.token = token.toJwt();
-    return existing.token;
+    return token.toJwt();
 }
 
 function fixPhone(phone) {
