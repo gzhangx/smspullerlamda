@@ -13,6 +13,12 @@ async function doProcess(body) {
         }
     }
 
+    const twilioSid = user.twilioSid;
+    if (!twilioSid) {
+        return {
+            error: 'User not setup for sms'
+        }
+    }
     return {
         ...user
     }
