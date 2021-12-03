@@ -1,6 +1,6 @@
 const db = require('./db');
 const smst = require('./smst');
-const Promise = requrie('bluebird');
+const Promise = require('bluebird');
 
 async function doProcess(body) {
     if (!body.username) {
