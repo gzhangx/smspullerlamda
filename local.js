@@ -1,6 +1,8 @@
 const db = require('./dbops');
 const smst = require('./smst');
 
+const { replyToMessage } = require('./awsutil');
+
 const credentials = require('./credentials.json');
 async function test(username, phone)
 {
@@ -10,6 +12,7 @@ async function test(username, phone)
     const twilioSid = user.twilioSid;
     smst.checkSms(twilioSid, phone, async msg => {
         console.log(`got msg ${msg.body}`);
+        replyToMessage(msg, 'test')
     });
 }
 
