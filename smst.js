@@ -90,7 +90,8 @@ async function checkSms(serviceSid, phone, onMsg, existingToken) {
     //await deleteAll();
     phone = fixPhone(phone);
     const tkIdentity = `GGID${phone}`;
-    const token = existingToken || await generateToken(tkIdentity, serviceSid);
+    const creatorUser = 'systemUser';
+    const token = existingToken || await generateToken(creatorUser, serviceSid);
     const client = new twilioConversionsImp.Client(token);
     await new Promise(resolve => {
         client.on('stateChanged', state => {
@@ -107,7 +108,9 @@ async function checkSms(serviceSid, phone, onMsg, existingToken) {
     try {
         conv = await client.getConversationByUniqueName(tkIdentity);
         alreadyExists = true;
-    } catch {
+    } catch (ex) {
+        console.log('unable to find existing by uniq')
+        console.log(ex)
         conv = await client.createConversation({
             friendlyName: 'ggfreiendlyname',
             uniqueName: tkIdentity,
@@ -150,7 +153,7 @@ async function checkSms(serviceSid, phone, onMsg, existingToken) {
     //    conversation: 'https://aim.us1.twilio.com/Client/v2/Services/IS020154fc64564f8aa216d34ee162e4ef/Conversations/CHe79897e3d3d2413689cce65754dbfca6'
     //}
     if (!alreadyExists) {
-        const addres = await conv.add(tkIdentity);
+        const addres = await conv.add(creatorUser);
         console.log(`AddpartToConvo res=${addres.sid}`);
     }
     //await conv.sendMessage('testtest1');
@@ -182,6 +185,7 @@ const sendTextMsg = async (toNum, data) => {
 //return getAllMessages(credentials.twilio.serviceSidDontUse, msgs => console.log(msgs));
 
 module.exports = {
+    deleteAll,
     sendTextMsg,
     getAllMessages,
     generateToken,
