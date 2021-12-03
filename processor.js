@@ -1,4 +1,7 @@
 const db = require('./db');
+const smst = require('./smst');
+const Promise = requrie('bluebird');
+
 async function doProcess(body) {
     if (!body.username) {
         return {
@@ -18,6 +21,14 @@ async function doProcess(body) {
         return {
             error: 'User not setup for sms'
         }
+    }
+
+    switch (body.action) {
+        case 'getMessages':
+            const data = await smst.getAllMessages(twilioSid, async msgs => {
+                return Promise.map()
+            })
+            return data;
     }
     return {
         ...user

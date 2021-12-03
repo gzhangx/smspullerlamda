@@ -34,6 +34,7 @@ exports.handler = async (event) => {
             break;
         case '$default':
         case 'message':
+        case 'getMessages':
             console.log(`message receive ${routeKey}`);
             await replyToMessage(body.ok ? await processor.doProcess(body.ok):body, connectionId)
             break;

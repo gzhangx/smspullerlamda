@@ -33,15 +33,17 @@ function mapMessage(m) {
 }
 async function getAllMessages(serviceId, onMsgs) {
     const r = await doTwilioGet(`Services/${serviceId}/Conversations`);
+    let res = [];
     while (true) {
-        await Promise.map(r.conversations, async conv => {
+        const cur = await Promise.map(r.conversations, async conv => {
             //const serviceSid = conv.chat_service_sid; //'ISxxxxxxxxxxxxx';
             //const msgs = await doTwilioGet(`Services/${serviceSid}/Conversations/${conv.sid}/Messages?Order=desc&PageSize=50`);
             //onMsgs(msgs.messages.map(mapMessage));            
             const msgs = await twilioClient.conversations.conversations(conv.sid).messages.page({ order: 'desc', limit: 50, pageNumber: 0 })
             //nextPageUrl, previousPageUrl,instances[]
-            await onMsgs(msgs.instances.map(mapMessage));
+            return await onMsgs(msgs.instances.map(mapMessage));
         });
+        res = res.concat(cur);
         const nextPageUrl = r.meta.next_page_url
         if (nextPageUrl) {
             console.log(`pagging next ${nextPageUrl}`);
