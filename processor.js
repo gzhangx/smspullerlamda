@@ -1,6 +1,7 @@
 const db = require('./db');
 const smst = require('./smst');
-const Promise = require('bluebird');
+const dbOps = require('./dbops');
+const dbOps = require('./dbops');
 
 async function doProcess(body) {
     if (!body.username) {
@@ -9,7 +10,7 @@ async function doProcess(body) {
         }
     }
 
-    const user = await db.getOneByName(process.env.USER_TABLE_NAME, 'username', body.username);
+    const user = await dbOps.getUserByName(body.username);
     if (!user) {
         return {
             error:'User not found'
@@ -26,7 +27,8 @@ async function doProcess(body) {
     switch (body.action) {
         case 'getMessages':
             const data = await smst.getAllMessages(twilioSid, async msgs => {
-                return Promise.map()
+                await dbOps.saveSmsMessages(msgs);
+                return msgs;
             })
             return data;
     }

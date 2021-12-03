@@ -50,6 +50,7 @@ async function getAllMessages(serviceId, onMsgs) {
             r = await doTwilioGet(nextPageUrl);
         } else break;
     }
+    return res;
 }
 
 async function generateToken(identity, serviceSid) {
