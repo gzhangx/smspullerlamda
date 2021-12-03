@@ -22,7 +22,7 @@ function mapMessage(m) {
         author: m.author,
         body: m.body,
         index: m.index,
-        timestamp: m.dateCreated || m.date_created,
+        timestamp: (m.dateCreated || m.date_created).toISOString(),
         id: m.sid,
         media: m.media,
         processor: 'twillio',
@@ -41,7 +41,6 @@ async function getAllMessages(serviceId, onMsgs) {
             //onMsgs(msgs.messages.map(mapMessage));            
             const msgs = await twilioClient.conversations.conversations(conv.sid).messages.page({ order: 'desc', limit: 50, pageNumber: 0 })
             //nextPageUrl, previousPageUrl,instances[]
-            console.log(msgs.instances[0])
             return await onMsgs(msgs.instances.map(mapMessage));
         });
         res = res.concat(cur);
