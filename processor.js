@@ -1,17 +1,19 @@
 
 const smst = require('./smst');
 const dbOps = require('./dbops');
+const dbops = require('./dbops');
 
 const getListenerKey = (sid, phone) => `${sid}-${smst.fixPhone(phone)}`;
 
-async function doProcess(body, sendWs) {
-    if (!body.username) {
+async function doProcess(body, sendWs, connectionId) {
+    const username = body.username;
+    if (!username) {
         return {
             error:'No username',
         }
     }
 
-    const user = await dbOps.getUserByName(body.username);
+    const user = await dbOps.getUserByName(username);
     if (!user) {
         return {
             error:'User not found'
@@ -25,6 +27,11 @@ async function doProcess(body, sendWs) {
         }
     }
 
+    await dbops.saveSmsConvId({
+        id: twilioSid,
+        connectionId,
+        username,
+    })
     switch (body.action) {
         case 'getMessages':
             const data = await smst.getAllMessages(twilioSid, async msgs => {

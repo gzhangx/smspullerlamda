@@ -33,7 +33,7 @@ exports.handler = async (event) => {
         case 'message':
         case 'getMessages':
             console.log(`message receive ${routeKey}, responding to ${connectionId}`);
-            await replyToMessage(body.ok ? await processor.doProcess(body.ok, msg => replyToMessage(msg, connectionId)):body, connectionId)
+            await replyToMessage(body.ok ? await processor.doProcess(body.ok, msg => replyToMessage(msg, connectionId), connectionId):body, connectionId)
             break;
         default:
             console.log('unknown route ' + routeKey);

@@ -22,7 +22,7 @@ function mapMessage(m) {
         author: m.author,
         body: m.body,
         index: m.index,
-        timestamp: (m.dateCreated || m.date_created).toISOString(),
+        timestamp: (m.dateCreated?.toISOString || m.date_created),
         id: m.sid,
         media: m.media,
         processor: 'twillio',
