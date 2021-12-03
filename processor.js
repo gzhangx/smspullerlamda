@@ -14,7 +14,7 @@ async function process(body) {
     }
 
     return {
-        ...user;
+        ...user
     }
 }
 
