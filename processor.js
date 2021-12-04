@@ -32,7 +32,7 @@ async function doProcess(body, sendWs, connectionId) {
     switch (body.action) {
         case 'getMessages':
             const data = await smst.getAllMessages(twilioSid, async msgs => {
-                await dbOps.saveSmsMessages(msgs);
+                //await dbOps.saveSmsMessages(msgs);
                 return msgs;
             })
             return data;
@@ -44,10 +44,11 @@ async function doProcess(body, sendWs, connectionId) {
             }
             const phone = asms.fixPhone(body.number);            
             const res = await asms.sendMessage(user.asmsPhone, body.number, body.data, username);
-            await dbOps.saveSmsMessages({
+            await dbOps.saveSmsMessage({
                 ...res,
                 data: body.data,
                 username,
+                phone,
                 fromPhone: user.asmsPhone,
             });
             message = 'Sent'
