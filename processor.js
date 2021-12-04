@@ -52,6 +52,7 @@ async function doProcess(body, sendWs, connectionId) {
                 username,
                 phone,
                 fromPhone: user.asmsPhone,
+                timestamp: new Date().toISOString(),
             });
             message = 'Sent'
             break;
