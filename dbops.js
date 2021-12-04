@@ -7,7 +7,7 @@ module.exports = {
         await Promise.map(msgs, msg => db.addData(process.env.SMS_TABLE_NAME || 'SmsMessages', msg), {concurrency: 5});
     },
     updateSmsConvId: async (id, convId) => {
-        return await updateData(process.env.USER_TABLE_NAME,
+        return await db.updateData(process.env.USER_TABLE_NAME,
             id, 'set smsConvId=:convId', {
                 ":convId": convId
         });
