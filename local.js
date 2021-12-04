@@ -12,7 +12,7 @@ const allListeners = {
 
 };
 
-async function doSmsListening({ username, phone ,id})
+async function doSmsListening({ username, phone, twilioSid})
 {
     //await smst.deleteAll();
     //const user = await db.getUserByName(username);
@@ -47,11 +47,12 @@ async function keepListening() {
                 console.log(err);
                 return console.log("error getAllSmsConvIds ");
             }            
-            await Promise.map(data.Items, doSmsListening);
+            Promise.map(data.Items, doSmsListening);
         });
         await Promise.delay(60000);
     }
     //doSmsListening('ericktest6', credentials.twilio.myPhone);
 }
 
+//return smst.getAllMessages(credentials.twilio.serviceSidDontUse, msgs => console.log(msgs));
 keepListening();

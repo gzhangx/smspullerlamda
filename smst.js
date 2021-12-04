@@ -87,10 +87,10 @@ function fixPhone(phone) {
 
 
 async function checkSms(serviceSid, phone, onMsg, existingToken) {
-    //await deleteAll();
+    await deleteAll();
     phone = fixPhone(phone);
     const tkIdentity = `GGID${phone}`;
-    const creatorUser = 'systemUser';
+    const creatorUser = tkIdentity; //'systemUser';
     const token = existingToken || await generateToken(creatorUser, serviceSid);
     const client = new twilioConversionsImp.Client(token);
     await new Promise(resolve => {

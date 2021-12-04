@@ -45,9 +45,11 @@ async function doProcess(body, sendWs, connectionId) {
                     error: `Bad number ${body.number}`,
                 }
             }
+            const phone = smst.fixPhone(body.number);
             await dbOps.saveSmsContacted({
-                id: twilioSid,
-                phone: body.number,
+                id: `${twilioSid}${phone}`,
+                twilioSid,
+                phone,
                 username,
             });
             await smst.sendTextMsg(body.number, body.data);            
