@@ -52,6 +52,7 @@ async function doProcess(body, sendWs, connectionId) {
                 data: body.data,
                 username,
                 phone,
+                source: 'sms',                
                 fromPhone: user.asmsPhone,
                 timestamp: new Date().toISOString(),
             });
