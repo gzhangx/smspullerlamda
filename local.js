@@ -28,7 +28,6 @@ async function doSmsListening({ username, phone ,id})
             msg.belongsTo = username;
             await db.saveSmsMessages([msg]);
             const convId = await db.getSmsConvId(twilioSid);
-            console.log(`convid is ${convId}`)
             if (convId) {
                 await replyToMessage(msg, convId.connectionId);
             }
@@ -47,8 +46,8 @@ async function keepListening() {
             if (err) {
                 console.log(err);
                 return console.log("error getAllSmsConvIds ");
-            }
-            await Promise.map(data.Items, itm => doSmsListening);
+            }            
+            await Promise.map(data.Items, doSmsListening);
         });
         await Promise.delay(60000);
     }
