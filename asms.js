@@ -2,7 +2,7 @@ const AWS = require('aws-sdk');
 // The AWS Region that you want to use to send the message. For a list of
 // AWS Regions where the Amazon Pinpoint API is available, see
 // https://docs.aws.amazon.com/pinpoint/latest/apireference/.
-const aws_region = "us-east-2";
+const aws_region = "us-east-1";
 AWS.config.update({ region: aws_region });
 
 function fixPhone(phone) {
