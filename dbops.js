@@ -8,4 +8,8 @@ module.exports = {
     },
     getSmsConvId: async id => await db.getOneByName('SmsConvSocketIds', 'id', id),
     saveSmsConvId: async data => await db.addData('SmsConvSocketIds', data),
+    getAllSmsContacted: async onData => {
+        return await db.getAll({ TableName: 'SmsContacted'}, onData)
+    },
+    saveSmsContacted: async data => await db.addData('SmsContacted', data),
 }

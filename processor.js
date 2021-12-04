@@ -31,7 +31,7 @@ async function doProcess(body, sendWs, connectionId) {
         id: twilioSid,
         connectionId,
         username,
-    })
+    });
     switch (body.action) {
         case 'getMessages':
             const data = await smst.getAllMessages(twilioSid, async msgs => {
@@ -45,7 +45,12 @@ async function doProcess(body, sendWs, connectionId) {
                     error: `Bad number ${body.number}`,
                 }
             }
-            return await smst.sendTextMsg(body.number, body.data);
+            await dbOps.saveSmsContacted({
+                id: twilioSid,
+                phone: body.number,
+                username,
+            });
+            await smst.sendTextMsg(body.number, body.data);            
         case 'token':
             const token = await smst.generateToken(body.username, twilioSid);
             return {
