@@ -3,7 +3,7 @@ const AWS = require('aws-sdk');
 // AWS Regions where the Amazon Pinpoint API is available, see
 // https://docs.aws.amazon.com/pinpoint/latest/apireference/.
 const aws_region = "us-east-1";
-AWS.config.update({ region: aws_region });
+
 
 function fixPhone(phone) {
     if (phone.length == 10) return `+1${phone}`;
@@ -21,6 +21,9 @@ async function sendMessage(originationNumber = '+18558021929', destinationNumber
 
     const registeredKeyword = "myKeyword";
 
+    AWS.config.update({
+        region: aws_region,
+    });
     const pinpoint = new AWS.Pinpoint();
 
     const params = {
