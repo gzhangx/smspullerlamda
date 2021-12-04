@@ -29,6 +29,7 @@ async function doProcess(body, sendWs, connectionId) {
     }
 
     let message = '';
+    let res = null;
     await dbOps.updateSmsConvId(user.id, connectionId);
     switch (body.action) {
         case 'getMessages':
@@ -44,7 +45,7 @@ async function doProcess(body, sendWs, connectionId) {
                 }
             }
             const phone = asms.fixPhone(body.number);            
-            const res = await asms.sendMessage(user.asmsPhone, body.number, body.data, username);
+            res = await asms.sendMessage(user.asmsPhone, body.number, body.data, username);
             await dbOps.saveSmsMessage({
                 id: uuid.v1(),
                 ...res,
