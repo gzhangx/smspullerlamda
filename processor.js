@@ -1,10 +1,7 @@
 
-const smst = require('./smst');
 const asms = require('./asms');
 const dbOps = require('./dbops');
 const uuid = require('uuid');
-
-const getListenerKey = (sid, phone) => `${sid}-${smst.fixPhone(phone)}`;
 
 async function doProcess(body, sendWs, connectionId) {
     const username = body.username;

@@ -10,7 +10,7 @@ async function processResonse(event) {
 
     const timestamp = new Date().toISOString();;
     const ress = await Promise.map(event.Records, async record => {
-        const msg = record.Sns.Message;
+        const msg = JSON.parse(record.Sns.Message);
         msg.source = 'sms';
         msg.id = msg.inboundMessageId || uuid.v1();
         msg.timestamp = timestamp;
