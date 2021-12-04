@@ -1,6 +1,7 @@
 
 const processor = require('./processor');
 const { replyToMessage } = require('./awsutil');
+const rspProcessor = require('./responseProcessor');
 
 function parseBody(body) {
     if (!body) return {
@@ -18,8 +19,11 @@ function parseBody(body) {
 }
 exports.handler = async (event) => {
     // TODO implement
-    console.log('got event');
+    console.log('--------------------got event');
     console.log(event);
+    if (event.Records) {
+        return await rspProcessor.processResonse(event);
+    }
     const { routeKey, connectionId } = event.requestContext || {};
     const body = parseBody(event.body);    
     switch (routeKey) {
