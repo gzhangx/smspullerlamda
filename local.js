@@ -43,7 +43,7 @@ async function doSmsListening({ username, phone ,id})
 async function keepListening() {
     while (true) {
         console.log('getting connections');
-        await dbops.getAllSmsContacted((err, data) => {
+        await dbops.getAllSmsContacted(async (err, data) => {
             if (err) {
                 console.log(err);
                 return console.log("error getAllSmsConvIds ");
