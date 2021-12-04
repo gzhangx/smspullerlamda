@@ -12,7 +12,7 @@ const allListeners = {
 
 };
 
-async function doSmsListening({ username, phone, twilioSid})
+async function doSmsListening({ username, phone, twilioSid, id})
 {
     //await smst.deleteAll();
     //const user = await db.getUserByName(username);
@@ -21,7 +21,7 @@ async function doSmsListening({ username, phone, twilioSid})
     }
     //const twilioSid = user.twilioSid;    
     if (allListeners[id]) return;
-    console.log(`creating conv for ${id} ${phone} ${username}`)
+    console.log(`creating conv for ${id} ${phone} ${username} ${twilioSid}`)
     const conv = await smst.checkSms(twilioSid, phone, async msg => {
         console.log(`got msg ${msg.body}`);
         try {
