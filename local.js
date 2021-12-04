@@ -19,7 +19,7 @@ async function doSmsListening({ username, phone, twilioSid})
     if (!phone) {
         return console.log(`no phone for ${id} ${username}`);
     }
-    const twilioSid = id; //user.twilioSid;    
+    //const twilioSid = user.twilioSid;    
     if (allListeners[id]) return;
     console.log(`creating conv for ${id} ${phone} ${username}`)
     const conv = await smst.checkSms(twilioSid, phone, async msg => {
