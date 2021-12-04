@@ -56,6 +56,7 @@ async function doProcess(body, sendWs, connectionId) {
                 timestamp: new Date().toISOString(),
             });
             message = 'Sent'
+            res = res.MessageResponse.Result;
             break;
     }
     return {
