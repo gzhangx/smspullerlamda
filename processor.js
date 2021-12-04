@@ -2,6 +2,7 @@
 const smst = require('./smst');
 const asms = require('./asms');
 const dbOps = require('./dbops');
+const uuid = require('uuid');
 
 const getListenerKey = (sid, phone) => `${sid}-${smst.fixPhone(phone)}`;
 
@@ -45,6 +46,7 @@ async function doProcess(body, sendWs, connectionId) {
             const phone = asms.fixPhone(body.number);            
             const res = await asms.sendMessage(user.asmsPhone, body.number, body.data, username);
             await dbOps.saveSmsMessage({
+                id: uuid.v1(),
                 ...res,
                 data: body.data,
                 username,
