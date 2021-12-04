@@ -6,10 +6,10 @@ module.exports = {
     saveSmsMessages: async msgs => {        
         await Promise.map(msgs, msg => db.addData(process.env.SMS_TABLE_NAME || 'SmsMessages', msg), {concurrency: 5});
     },
-    getSmsConvId: async id => await db.getOneByName('SmsConvSocketIds', 'id', id),
-    saveSmsConvId: async data => await db.addData('SmsConvSocketIds', data),
-    getAllSmsContacted: async onData => {
-        return await db.getAll({ TableName: 'SmsContacted'}, onData)
+    updateSmsConvId: async (id, convId) => {
+        return await updateData(process.env.USER_TABLE_NAME,
+            id, 'set smsConvId=:convId', {
+                ":convId": convId
+        });
     },
-    saveSmsContacted: async data => await db.addData('SmsContacted', data),
 }

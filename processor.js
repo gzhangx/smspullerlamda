@@ -27,11 +27,8 @@ async function doProcess(body, sendWs, connectionId) {
         }
     }
 
-    await dbOps.saveSmsConvId({
-        id: twilioSid,
-        connectionId,
-        username,
-    });
+    let message = '';
+    await dbOps.updateSmsConvId(user.id, connectionId);
     switch (body.action) {
         case 'getMessages':
             const data = await smst.getAllMessages(twilioSid, async msgs => {
@@ -39,51 +36,27 @@ async function doProcess(body, sendWs, connectionId) {
                 return msgs;
             })
             return data;
-        case 'sendMessage': 
+        case 'sendMessage':
             if (!body.number || !body.number.match(/[0-9]{10,11}/g)) {
                 return {
                     error: `Bad number ${body.number}`,
                 }
             }
-            const phone = asms.fixPhone(body.number);
-            await dbOps.saveSmsContacted({
-                id: `${twilioSid}${phone}`,
-                twilioSid,
-                phone,
+            const phone = asms.fixPhone(body.number);            
+            const res = await asms.sendMessage(user.asmsPhone, body.number, body.data, username);
+            await dbOps.saveSmsMessages({
+                ...res,
+                data: body.data,
                 username,
+                fromPhone: user.asmsPhone,
             });
-            await asms.sendMessage(user.asmsPhone, body.number, body.data, username);
-        case 'token':
-            const token = await smst.generateToken(body.username, twilioSid);
-            return {
-                token,
-            };
-        case 'listen': {
-            if (!body.number || !body.number.match(/[0-9]{10,11}/g)) {
-                return {
-                    error: `Bad number ${body.number}`,
-                }
-            }
-            const phone = body.number;
-            const lk = getListenerKey(twilioSid, phone);
-            let onMsg = null;
-            console.log(`adding listener for ${lk}`);
-            onMsg = msg => {
-                sendWs(JSON.stringify(msg));
-            }
-            try {
-                console.log('checking sms')
-                const conv = await smst.checkSms(twilioSid, phone, onMsg, body.token);
-                allListeners[lk] = conv;
-            } catch (exc) {
-                console.log('??????????????????? checksms error');
-                console.log(exc);
-            }                    
-        }
+            message = 'Sent'
+            break;
     }
     return {
-        ...user
-    }
+        message,
+        res,
+    };
 }
 
 module.exports = {
