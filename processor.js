@@ -1,7 +1,7 @@
 
 const smst = require('./smst');
+const asms = require('./asms');
 const dbOps = require('./dbops');
-const dbops = require('./dbops');
 
 const getListenerKey = (sid, phone) => `${sid}-${smst.fixPhone(phone)}`;
 
@@ -27,7 +27,7 @@ async function doProcess(body, sendWs, connectionId) {
         }
     }
 
-    await dbops.saveSmsConvId({
+    await dbOps.saveSmsConvId({
         id: twilioSid,
         connectionId,
         username,
@@ -45,14 +45,14 @@ async function doProcess(body, sendWs, connectionId) {
                     error: `Bad number ${body.number}`,
                 }
             }
-            const phone = smst.fixPhone(body.number);
+            const phone = asms.fixPhone(body.number);
             await dbOps.saveSmsContacted({
                 id: `${twilioSid}${phone}`,
                 twilioSid,
                 phone,
                 username,
             });
-            await smst.sendTextMsg(body.number, body.data);            
+            await asms.sendMessage(user.asmsPhone, body.number, body.data, username);
         case 'token':
             const token = await smst.generateToken(body.username, twilioSid);
             return {

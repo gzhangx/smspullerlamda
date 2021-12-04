@@ -5,9 +5,17 @@ const AWS = require('aws-sdk');
 const aws_region = "us-east-1";
 AWS.config.update({ region: aws_region });
 
+function fixPhone(phone) {
+    if (phone.length == 10) return `+1${phone}`;
+    if (phone.length == 11) return `+${phone}`;
+    return phone;
+}
 
 async function sendMessage(originationNumber = '+18558021929', destinationNumber, message, senderId) {
-    const applicationId = 'acfb7b22914444be85bd4e50529a2909';    
+    const applicationId = 'acfb7b22914444be85bd4e50529a2909';
+
+    originationNumber = fixPhone(originationNumber);
+    destinationNumber = fixPhone(destinationNumber);
 
     const messageType = "TRANSACTIONAL";
 
@@ -44,4 +52,9 @@ async function sendMessage(originationNumber = '+18558021929', destinationNumber
             //    + data['MessageResponse']['Result'][destinationNumber]['StatusMessage']);
         }
     }));
+}
+
+module.exports = {
+    sendMessage,
+    fixPhone,
 }
