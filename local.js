@@ -13,8 +13,7 @@ const allListeners = {
 };
 
 async function doSmsListening({ username, phone, twilioSid, id})
-{
-    //await smst.deleteAll();
+{    
     //const user = await db.getUserByName(username);
     if (!phone) {
         return console.log(`no phone for ${id} ${username}`);
@@ -22,24 +21,30 @@ async function doSmsListening({ username, phone, twilioSid, id})
     //const twilioSid = user.twilioSid;    
     if (allListeners[id]) return;
     console.log(`creating conv for ${id} ${phone} ${username} ${twilioSid}`)
-    const conv = await smst.checkSms(twilioSid, phone, async msg => {
-        console.log(`got msg ${msg.body}`);
-        try {
-            msg.belongsTo = username;
-            await db.saveSmsMessages([msg]);
-            const convId = await db.getSmsConvId(twilioSid);
-            if (convId) {
-                await replyToMessage(msg, convId.connectionId);
+    try {
+        const conv = await smst.checkSms(twilioSid, phone, async msg => {
+            console.log(`got msg ${msg.body} from ${id}`);
+            try {
+                msg.belongsTo = username;
+                await db.saveSmsMessages([msg]);
+                const convId = await db.getSmsConvId(twilioSid);
+                if (convId) {
+                    await replyToMessage(msg, convId.connectionId);
+                }
+            } catch (exc) {
+                console.log('failed to reply msg');
+                console.log(exc);
             }
-        } catch (exc) {
-            console.log('failed to reply msg');
-            console.log(exc);
-        }
-    });
-    allListeners[id] = conv;
+        });
+        allListeners[id] = conv;
+    } catch (exc) {
+        console.log(`error on ${id} ${username}`);
+        console.log(exc);
+    }
 }
 
 async function keepListening() {
+    await smst.deleteAll();
     while (true) {
         console.log('getting connections');
         await dbops.getAllSmsContacted(async (err, data) => {
